@@ -1,0 +1,76 @@
+# Project ----------------------------------------------------------------------------
+
+out_path: "cached/trained_models"
+
+name: "dev_binary_pathmnist_0.40test"
+ssh_mode: True
+
+# Wandb
+wandb_project_name: "model_repair_classifier"
+wandb_group: "dev" # If not sweep, will use as subdir
+
+reset_weights_modulo: null
+
+# Dataset: -----------------------------------------
+dataset_path: "dataset/data/pathmnist.npz"
+n_c_input: 3
+n_classes: 2
+dataset_key: "pathmnist"
+binary_mode: True
+increase_test_size: True
+# Both of those will make the test set 0.39998727374 % of the whole data
+train_to_test: 0.341 # in % 
+val_to_test: 0.5 # in %
+
+# Train:
+quick_debug: False
+max_epochs: 2000
+max_batch_epoch: 1000
+save_model_step: 2
+summary_proportion: 1.0
+
+optimizer:
+  name: "torch.optim.Adam"
+  params:
+    lr: 0.0001
+
+# Testing: --------------------------------
+speed_test_iters: 500
+only_test_mode: False
+test_every_epoch: False
+smaller_test: null # None to use all the test set
+
+# Dataloader
+slice_size: 1
+chunk_size: 1
+stride: 1
+batch_size: 2
+n_workers: 8
+seq_size_test: null
+
+# Stop conditions:
+max_time: 24 # In hours
+time_smart_give_up: 4 # in hours (null for disabling)
+min_score_not_give_up: 0.5
+time_since_last_improvement: 6
+
+
+scheduler_use_tmp: True
+scheduler_patience_tmp: 20
+scheduler:
+  name: "torch.optim.lr_scheduler.ReduceLROnPlateau"
+  use: False
+  give_val: True # Give validation value to step() or not
+  params:
+    mode: "max"
+    patience: 100
+    min_lr: 0.000001
+
+max_grad_norm: 1000
+
+use_swa: False
+swa_start: 200
+
+detach_modulo: 1.0 # 1 means detach every chunk, 2 every 2 chunks, etc
+
+max_normalize: True

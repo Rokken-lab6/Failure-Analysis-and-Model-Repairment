@@ -1,0 +1,25 @@
+
+# Training the model ---------------------------------------------
+torch
+torchvision
+numpy==1.19.2
+pyyaml
+python-box[all]
+matplotlib
+tqdm
+ipython
+tensorboard
+pudb
+wandb
+
+
+# For the model repairment framework ---------------------------------------------
+pyarrow
+zarr
+pandas
+umap-learn
+joblib
+scikit-learn
+seaborn
+prettytable # For cluster_metrics report
+tensorflow-cpu # For umap warning ...

@@ -1,0 +1,131 @@
+
+pipeline:
+  storage: "cached/"
+
+override: # Override to allow the public version to run
+  model_cfg: "configs/model/bp_mnist_model.yml"
+  model_path: "cached/trained_models/original"
+
+trigger_extract:
+  version: 300 # Increment when need to force recompute
+
+  interface: model_repair_interface.MedMNISTInterface.MedMNISTInterface
+  interface_cfg:
+    cfg_path: "/nas_share/97_Personal/thomas/exps_out/model_repair/model_repair_classifier/dev/winter-sun-40_dev_binary_pathmnist_0.40test/cfg.yml"
+  epochs: [300]
+
+  max_checkpoints: 2 # Will remove first ones first
+  ref_epoch: 300 # Deployed model epoch
+  stride: 4
+
+  extract_checkpoint:
+    version: 20
+
+    max_dim_grads: 100
+    seed_random_proj: 42 # NOTE: Doesn't get changed automatically in the code, be careful
+
+    get_feats: True
+    get_grads: true
+
+    n_samples: 1000000
+    downsample_correct_mod: 1
+
+    lr: 0.001
+    shuffle: True # If more than one epoch, do not shuffle....
+
+
+embed:
+  version: 101 # Increment when need to force recompute
+
+  embedding_features: "feats_avg"
+
+  layers: null # null for all else [0,1,2]...
+
+  only_mistakes_embedding: True
+
+  ND: 10 # Number of dimension embedding (2D is also always done)
+
+  method: "umap"
+
+  n_neighbors: 5
+  min_dist: 0.0
+  normalize: False
+
+plot_embeddeds:
+  version: 1 # Increment when need to force recompute
+  markers: ["o", "x", "1", "2", "3", "4", "s", "p", "*", "d"]
+  key_for_markers: "gt"
+
+
+cluster:
+  version: 100 # Increment when need to force recompute
+  algorithm: "metadata" #  random or k-mean or metadata
+  n_random_clusters: 5
+  min_clusters: 2
+  max_clusters: 10
+  metadata_key: "pred" # <- pred 0/1 corresponds to fp/fn (or the reverse)
+
+split_clusters:
+  version: 4 # Increment when need to force recompute
+  test_ratio: 0.2
+  val_to_train_ratio: 0.2
+
+show_clusters_content:
+  version: 2 # Increment when need to force recompute
+  n_examples: 50
+
+make_cluster_stats:
+  version: 3
+
+trigger_finetune:
+  version: 100
+
+  use_ewc_finetune: False
+
+  finetune_on_cluster:
+    version: 106 # Increment when need to force recompute
+    learning_rate: 0.000001
+    max_epochs_train: 100
+    max_steps_per_epoch: 1000
+    max_wait_epoch_inc: 100
+    weight_decay: 0.001
+
+    train_also_correct: True
+    train_also_correct_weight_cluster: 1.0
+    train_also_correct_preserve_thresh: 0.9
+    
+  finetune_on_cluster_ewc:
+    version: 100 # Increment when need to force recompute
+    learning_rate: 0.00001
+    max_epochs_train: 40
+    max_steps_per_epoch: 100
+    max_wait_epoch_inc: 10
+    n_samples: 1000
+    ewc_lambda: 10000000
+    weight_decay: 0.001
+  
+  get_another_epoch:
+    other_epoch: 50
+
+  inference_on_whole_set:
+    version: 2 # Increment when need to force recompute
+
+  evaluate_on_all_clusters:
+    version: 2 # Increment when need to force recompute
+
+plot_heatmaps:
+  version: 1
+
+compute_cluster_metrics:
+  version: 1 # Increment when need to force recompute
+
+compute_cluster_metrics_bounded:
+  version: 1
+
+plot_intra_heatmap:
+  version: 1
+  plot_intra_metric: True
+
+report:
+  flow_name: "fpfn"
+  path: "out/report/"
