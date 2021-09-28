@@ -15,7 +15,7 @@ This code was written by Thomas Henn at Rokken, Osaka in collaboration with Teru
 I would especially like to thank [Ryutaro Tanno](https://rt416.github.io/)  at University College London, UK for his valuable contributions to this paper.
 In addition, I would like to thank Masamichi Andou for the creation of the catheter detection ground-truth and the extensive detailed labelling of the failure cases.
 
-For more information, please check our paper published at [MICCAI2021](https://link.springer.com/chapter/10.1007%2F978-3-030-87199-4_48) or on arXiv (Coming soon).
+For more information, please check our paper published at [MICCAI2021](https://link.springer.com/chapter/10.1007%2F978-3-030-87199-4_48) or on [arXiv](https://arxiv.org/abs/2109.12347).
 
 
 <img src="images/finetuning_matrices.png" width="800">
